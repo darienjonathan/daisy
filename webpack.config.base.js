@@ -28,6 +28,22 @@ const htmlTemplates = routeDataMapper({
     )
 })
 
+const styleLoaders = [
+    {
+        loader: 'css-loader',
+        options: {
+            importLoaders: 2,
+        }
+    },
+    'postcss-loader',
+    {
+        loader: 'sass-loader',
+        options: {
+            includePaths: [ `${SRC}/scss` ],
+        },
+    }
+]
+
 module.exports = {
     // エントリーファイル
     entry: {
@@ -43,6 +59,23 @@ module.exports = {
     module: {
         // 各ファイル形式ごとのビルド設定
         rules: [
+            {
+                test: /\.vue$/,
+                loader: 'vue-loader',
+                options: {
+                    loaders: {
+                        scss: [].concat(['vue-style-loader'], styleLoaders),
+                    },
+                    cssSourceMap: true,
+                    cacheBusting: true,
+                    transformToRequire: {
+                        video: ['src', 'poster'],
+                        source: 'src',
+                        img: 'src',
+                        image: 'xlink:href',
+                    },
+                },
+            },
             {
                 test: /\.js$/,
                 loader: 'babel-loader',
@@ -74,21 +107,7 @@ module.exports = {
             {
                 test: /\.scss$/,
                 use: ExtractTextPlugin.extract({
-                    use: [
-                        {
-                            loader: 'css-loader',
-                            options: {
-                                importLoaders: 2,
-                            }
-                        },
-                        'postcss-loader',
-                        {
-                            loader: 'sass-loader',
-                            options: {
-                                includePaths: [ `${SRC}/scss` ],
-                            },
-                        }
-                    ]
+                    use: styleLoaders
                 })
             },
             {
@@ -108,7 +127,7 @@ module.exports = {
     cache: true,
     // 拡張子省略時のpath解決
     resolve: {
-        extensions: ['.js', '.json', '*'],
+        extensions: ['.js', '.json', '.vue', '*'],
         alias: {
             '@': path.join(__dirname, SRC, 'js'),
         }
