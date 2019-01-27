@@ -1,55 +1,71 @@
 <template lang="pug">
   .concert
-    .loading(:class="{ 'fadeOut': loaded }") Loading...
-    .wrapper(:class="{ 'fadeIn': loaded, 'wrapper--post-click': start, 'wrapper--pre-click': !start }")
-      box.box--prompt.box--prompt-button(:class="{ 'fadeOut': start }" :style="{'opacity': start ? 0 : getOpacity.prompt }" )
-        button.prompt-button(v-on:click="setStart")
-          | Tap to start
+    transition(name="fade")
+      .loading(v-if="!loaded") Loading...
 
-      box.box--prompt.box--prompt-scroll(:class="{ 'fadeIn': start }" :style="{'opacity': start ? getOpacity.prompt : 0 }" )
-        | Scroll Down Gently ↓
+    transition(name="fade")
+      .wrapper(v-if="loaded" :class="{'wrapper--post-click': start, 'wrapper--pre-click': !start }")
 
-      box(:style="{'opacity': getOpacity.daisy }")
-        | Dear Daisy...
+        transition(name="fade")
+          box.box--prompt.box--prompt-button(v-if="!start")
+            button.prompt-button(v-on:click="setStart")
+              | Tap to start
 
-      box(:style="{'opacity': getOpacity.video }")
-        video.content__video(src="/video/video.mp4" muted playsinline v-play="start")
+        transition(name="fade")
+          box.box--prompt.box--prompt-scroll(v-if="start" :style="{'opacity': getOpacity.prompt }")
+            | Scroll Down Gently ↓
 
-      box(:style="{'opacity': getOpacity.goodluck }")
-        .content__top
-          span.content__text.content__text--kanji 頑張って
-          span.content__text.content__text--romaji Ganbatte!
-        .content__bottom Good Luck!
+        box(:style="{'opacity': getOpacity.daisy }")
+          | Dear Daisy...
 
-      box(:style="{'opacity': getOpacity.pray }")
-        .content__top
-          span.content__text.content__text--kanji 祈って
-          span.content__text.content__text--romaji Inotte...
-        .content__bottom Pray...
-
-      box(:style="{'opacity': getOpacity.havefun }")
-        .content__top
-          span.content__text.content__text--kanji 楽しんで
-          span.content__text.content__text--romaji Tanoshinde.
-        .content__bottom Have Fun.
-
-      box.box--closing(:style="{'opacity': getOpacity.closing }")
-        .content__top
+        box(:style="{'opacity': getOpacity.video }")
           video.content__video(src="/video/video.mp4" muted playsinline v-play="start")
-        .content__bottom
-          | May all your hardwork pays off.
-          br
-          br
-          | Whatever you do, work at it with all your heart, as working for the Lord, not for human masters.
-          br
-          br
-          | (Colossians 3:23)
+
+        box(:style="{'opacity': getOpacity.goodluck }")
+          .content__top
+            span.content__text.content__text--kanji 頑張って
+            span.content__text.content__text--romaji Ganbatte!
+          .content__bottom Good Luck!
+
+        box(:style="{'opacity': getOpacity.pray }")
+          .content__top
+            span.content__text.content__text--kanji 祈って
+            span.content__text.content__text--romaji Inotte...
+          .content__bottom Pray...
+
+        box(:style="{'opacity': getOpacity.havefun }")
+          .content__top
+            span.content__text.content__text--kanji 楽しんで
+            span.content__text.content__text--romaji Tanoshinde.
+          .content__bottom Have Fun.
+
+        box.box--closing(:style="{'opacity': getOpacity.closing }")
+          .content__top
+            video.content__video(src="/video/video.mp4" muted playsinline v-play="start")
+          .content__bottom
+            | May all your hardwork pays off.
+            br
+            br
+            | Whatever you do, work at it with all your heart, as working for the Lord, not for human masters.
+            br
+            br
+            | (Colossians 3:23)
 
 </template>
 
 <style lang="scss" scoped>
 
 @import "common";
+
+/* transition */
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}
+
 /* loading */
 .loading {
   position: fixed;
@@ -59,9 +75,6 @@
 }
 
 /* wrapper */
-.wrapper {
-  opacity: 0;
-}
 
 .wrapper:before{
   content: "";
@@ -102,19 +115,13 @@
 
   box-sizing: border-box;
 
-  opacity: 0;
   transition: opacity 0.5s linear;
 }
 
 /* prompt */
-.box--prompt {
-  opacity: 1;
-}
+
 .box--prompt-button {
   z-index: 1;
-}
-.box--prompt-scroll {
-  opacity: 0;
 }
 
 .prompt-button {
@@ -124,17 +131,6 @@
   background: none;
   font-size: 1.1rem;
   padding: 10px;
-}
-
-.fadeOut {
-  transition: opacity 0.5s linear, visibility 0.5s linear;
-  opacity: 0;
-  visibility: hidden;
-}
-.fadeIn {
-  transition: opacity 0.5s linear, visibility 0.5s linear;
-  opacity: 1;
-  visibility: visible;
 }
 
 /* content-specific */
