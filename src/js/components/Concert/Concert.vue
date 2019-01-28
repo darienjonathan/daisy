@@ -1,18 +1,16 @@
 <template lang="pug">
   .concert
     transition(name="fade")
-      .loading(v-if="!loaded") Loading...
+      .loading(v-if="!loaded" key="notLoaded") Loading...
 
-    transition(name="fade")
-      .wrapper(v-if="loaded" :class="{'wrapper--post-click': start, 'wrapper--pre-click': !start }")
+      .wrapper(:class="{'wrapper--post-click': start, 'wrapper--pre-click': !start }" v-else key="loaded")
 
         transition(name="fade")
-          box.box--prompt.box--prompt-button(v-if="!start")
+          box.box--prompt.box--prompt-button(v-if="!start" key="notStarted")
             button.prompt-button(v-on:click="setStart")
               | Tap to start
 
-        transition(name="fade")
-          box.box--prompt.box--prompt-scroll(v-if="start" :style="{'opacity': getOpacity.prompt }")
+          box.box--prompt.box--prompt-scroll(:style="{'opacity': getOpacity.prompt }" v-else key="started")
             | Scroll Down Gently ↓
 
         box(:style="{'opacity': getOpacity.daisy }")
@@ -76,7 +74,7 @@
 
 /* wrapper */
 
-.wrapper:before{
+.wrapper:before {
   content: "";
   display: block;
   position: fixed;
