@@ -3,14 +3,14 @@
     transition(name="fade")
       .loading(v-if="!loaded" key="notLoaded") Loading...
 
-      .wrapper(:class="{'wrapper--post-click': start, 'wrapper--pre-click': !start }" v-else key="loaded")
+      .wrapper(:class="wrapperClass" v-else key="loaded")
 
-        transition(name="fade")
+        transition(name="fade" v-on:after-enter="afterEnter" mode="out-in")
           box.box--prompt.box--prompt-button(v-if="!start" key="notStarted")
             button.prompt-button(v-on:click="setStart")
               | Tap to start
 
-          box.box--prompt.box--prompt-scroll(:style="{'opacity': getOpacity.prompt }" v-else key="started")
+          box.box--prompt.box--prompt-scroll(:style="{ 'opacity': opacity }" v-else key="started")
             | Scroll Down Gently ↓
 
         box(:style="{'opacity': getOpacity.daisy }")
@@ -58,7 +58,7 @@
 /* transition */
 
 .fade-enter-active, .fade-leave-active {
-  transition: opacity .5s;
+  transition: opacity 1s;
 }
 .fade-enter, .fade-leave-to {
   opacity: 0;
@@ -140,6 +140,11 @@ import calc from '@/lib/concert/calc';
 
 export default {
   name: "Concert",
+  data: function() {
+    return {
+      animationStart: 0
+    }
+  },
   components: {
     Box
   },
@@ -152,11 +157,19 @@ export default {
       audioContext: state => state.concert.audioContext,
       gainNode: state => state.concert.gainNode
     }),
-    ...mapGetters(["getOpacity"])
+    ...mapGetters(["getOpacity"]),
+    wrapperClass() {
+      return this.start ? 'wrapper--post-click' : 'wrapper--pre-click';
+    },
+    opacity() {
+      if(this.animationStart) {
+        this.getOpacity.prompt;
+      }
+    }
   },
   methods: {
     ...mapMutations(["setLoaded", "setStart", "setOpacity", "setVolume", "setAudioContext", "setGainNode"]),
-    setElementOpacity() {
+    setElementOpacity: function() {
       Object.keys(this.elPos).forEach(el => {
         this.setOpacity({
           el,
@@ -164,7 +177,7 @@ export default {
         });
       });
     },
-    setAudioVolume() {
+    setAudioVolume: function() {
       let maxVolEl = this.elPos.video;
       let minVolEl = this.elPos.pray;
       this.setVolume({
@@ -172,6 +185,9 @@ export default {
       });
       this.gainNode.gain.value = this.volume;
       this.audioContext.connect(this.gainNode);
+    },
+    afterEnter: function(el) {
+      this.animationStart = 1;
     }
   },
   watch: {
