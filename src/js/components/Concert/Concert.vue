@@ -5,12 +5,12 @@
 
       .wrapper(:class="wrapperClass" v-else key="loaded")
 
-        transition(name="fade" v-on:after-enter="afterEnter" mode="out-in")
+        transition(name="fade" v-on:after-enter="startAnimation" mode="out-in")
           box.box--prompt.box--prompt-button(v-if="!start" key="notStarted")
             button.prompt-button(v-on:click="setStart")
               | Tap to start
 
-          box.box--prompt.box--prompt-scroll(:style="{ 'opacity': opacity }" v-else key="started")
+          box.box--prompt.box--prompt-scroll(:style="{'opacity': animationStart ? getOpacity.prompt : 0 }" v-else key="started")
             | Scroll Down Gently ↓
 
         box(:style="{'opacity': getOpacity.daisy }")
@@ -160,11 +160,6 @@ export default {
     ...mapGetters(["getOpacity"]),
     wrapperClass() {
       return this.start ? 'wrapper--post-click' : 'wrapper--pre-click';
-    },
-    opacity() {
-      if(this.animationStart) {
-        this.getOpacity.prompt;
-      }
     }
   },
   methods: {
@@ -186,7 +181,7 @@ export default {
       this.gainNode.gain.value = this.volume;
       this.audioContext.connect(this.gainNode);
     },
-    afterEnter: function(el) {
+    startAnimation: function(el) {
       this.animationStart = 1;
     }
   },
