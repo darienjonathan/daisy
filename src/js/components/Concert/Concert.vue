@@ -7,7 +7,7 @@
 
         transition(name="fade" v-on:after-enter="startAnimation" mode="out-in")
           box.box--prompt.box--prompt-button(v-if="!start" key="notStarted")
-            button.prompt-button(v-on:click="setStart")
+            button.prompt-button(v-on:click="initiate")
               | Tap to start
 
           box.box--prompt.box--prompt-scroll(:style="{'opacity': animationStart ? getOpacity.prompt : 0 }" v-else key="started")
@@ -164,6 +164,24 @@ export default {
   },
   methods: {
     ...mapMutations(["setLoaded", "setStart", "setOpacity", "setVolume", "setAudioContext", "setGainNode"]),
+    initiate: function() {
+      this.setStart();
+      loadSound('/audio/audio.mp3')
+        .then(({ source, gainNode }) => {
+          console.log(source);
+          if(source) source.start(0);
+          this.setAudioContext({
+            audioContext: source
+          });
+          this.setGainNode({
+            gainNode
+          });
+          window.addEventListener('scroll', _.throttle(() => {
+            this.setElementOpacity();
+            this.setAudioVolume();
+          }, 25));
+        })
+    },
     setElementOpacity: function() {
       Object.keys(this.elPos).forEach(el => {
         this.setOpacity({
@@ -179,6 +197,7 @@ export default {
         volume: calc.volume(calc.pos(maxVolEl), calc.pos(minVolEl))
       });
       this.gainNode.gain.value = this.volume;
+      console.log({ volume: this.gainNode.gain.value });
       this.audioContext.connect(this.gainNode);
     },
     startAnimation: function(el) {
@@ -187,7 +206,6 @@ export default {
   },
   watch: {
     start: function(val) {
-      this.audioContext.start(0);
     }
   },
   directives: {
@@ -202,20 +220,7 @@ export default {
     }
   },
   mounted() {
-    loadSound('/audio/audio.mp3')
-      .then(({ source, gainNode }) => {
-        this.setAudioContext({
-          audioContext: source
-        });
-        this.setGainNode({
-          gainNode
-        });
-        this.setLoaded();
-        window.addEventListener('scroll', _.throttle(() => {
-          this.setElementOpacity();
-          this.setAudioVolume();
-        }, 25));
-      })
+    this.setLoaded();
   }
   
 }
