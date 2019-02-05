@@ -5,12 +5,12 @@
 
       .wrapper(:class="wrapperClass" v-else key="loaded")
 
-        transition(name="fade" v-on:after-enter="startAnimation" mode="out-in")
+        transition(name="fade" v-on:after-enter="startPlay" mode="out-in")
           box.box--prompt.box--prompt-button(v-if="!start" key="notStarted")
-            button.prompt-button(v-on:click="setStart")
+            button.prompt-button(v-on:click="initiate")
               | Tap to start
 
-          box.box--prompt.box--prompt-scroll(:style="{'opacity': animationStart ? getOpacity.prompt : 0 }" v-else key="started")
+          box.box--prompt.box--prompt-scroll(:style="{'opacity': playStart ? getOpacity.prompt : 0 }" v-else key="started")
             | Scroll Down Gently ↓
 
         box(:style="{'opacity': getOpacity.daisy }")
@@ -142,7 +142,7 @@ export default {
   name: "Concert",
   data: function() {
     return {
-      animationStart: 0
+      playStart: 0
     }
   },
   components: {
@@ -164,6 +164,10 @@ export default {
   },
   methods: {
     ...mapMutations(["setLoaded", "setStart", "setOpacity", "setVolume", "setAudioContext", "setGainNode"]),
+    initiate: function() {
+      this.setStart();
+      if(this.audioContext) this.audioContext.start(0);
+    },
     setElementOpacity: function() {
       Object.keys(this.elPos).forEach(el => {
         this.setOpacity({
@@ -179,15 +183,15 @@ export default {
         volume: calc.volume(calc.pos(maxVolEl), calc.pos(minVolEl))
       });
       this.gainNode.gain.value = this.volume;
+      console.log({ volume: this.gainNode.gain.value });
       this.audioContext.connect(this.gainNode);
     },
-    startAnimation: function(el) {
-      this.animationStart = 1;
+    startPlay: function(el) {
+      this.playStart = 1;
     }
   },
   watch: {
     start: function(val) {
-      this.audioContext.start(0);
     }
   },
   directives: {
@@ -202,20 +206,20 @@ export default {
     }
   },
   mounted() {
-    loadSound('/audio/audio.mp3')
-      .then(({ source, gainNode }) => {
-        this.setAudioContext({
-          audioContext: source
-        });
-        this.setGainNode({
-          gainNode
-        });
-        this.setLoaded();
-        window.addEventListener('scroll', _.throttle(() => {
-          this.setElementOpacity();
-          this.setAudioVolume();
-        }, 25));
-      })
+      loadSound('/audio/audio.mp3')
+        .then(({ source, gainNode }) => {
+          this.setLoaded();
+          this.setAudioContext({
+            audioContext: source
+          });
+          this.setGainNode({
+            gainNode
+          });
+          window.addEventListener('scroll', _.throttle(() => {
+            this.setElementOpacity();
+            this.setAudioVolume();
+          }, 25));
+        })
   }
   
 }
