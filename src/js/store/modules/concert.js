@@ -1,4 +1,5 @@
 export default {
+    namespaced: 'true',
     state: {
       loaded: 0,
       start: 0,
