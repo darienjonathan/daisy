@@ -5,7 +5,7 @@
         | Loading...
       .wrapper(v-else key="loaded")
 
-        transition(name="fade" mode="out-in")
+        transition(name="fade" mode="out-in" v-on:after-enter="startPlay")
           .prompt(v-if="!start" key="notStarted")
             .prompt-wait(v-show="!isBirthday")
               | Whoops, it's not your birthday yet!
@@ -23,123 +23,13 @@
                 | Tap to play
 
           .lyrics_container(v-else key="start")
-            .block.lyrics
-              .lyrics__top
-                | syukur satu tahun Tuhan
-                pipe
-                | plihara
-              .lyrics__bottom
-                | berkat a
-                pipe
-                | nugrahNya melimpah
-                pipe
-                | besar bagimu
-
-            .block.lyrics
-              .lyrics__top
-                | kasih
-                pipe
-                | dan pimpinanNya dalam hi
-                pipe
-                | dupmu
-              .lyrics__bottom
-                | jadi sak
-                pipe
-                | si kebaikan Tuhan ba
-                pipe
-                | gi hidupmu
-
-            .block.lyrics
-              .lyrics__top
-                | Ku berdo
-                pipe
-                | a agar kau tetap seti
-                pipe
-                | a dalam Tuhan
-              .lyrics__bottom
-                | agar
-                pipe
-                | trang Kristus terpancar mela
-                pipe
-                | luimu
-
-            .block.lyrics
-              .lyrics__top
-                | Teruslah
-                pipe
-                | melayani Tuhan dan mu
-                pipe
-                | liakan namaNya
-              .lyrics__bottom
-                | jadi tla
-                pipe
-                | dan dan berkat bagi skliling
-                pipe
-                | mu
-
-            .block.lyrics.turquoise
-              .lyrics__top
-                | Smoga Tu
-                pipe
-                | han, trus menyinari wajah
-                pipe
-                | Nya kepadamu
-              .lyrics__bottom
-                | dan
-                pipe
-                | melimpahkan damai sejahtra
-                pipe
-                | bagimu
-      
-            .block.lyrics.turquoise
-              .lyrics__top
-                | Aku bersyu
-                pipe
-                | kur, atas hari ulang
-                pipe
-                | tahun sahabatku
-              .lyrics__bottom
-                | slamat hari
-                pipe
-                | ulang tahun Daisy Christi
-                pipe
-                | na
-
-            .block.lyrics.turquoise
-              .lyrics__top
-                | Smoga Tu
-                pipe
-                | han, trus menyinari wajah
-                pipe
-                | Nya kepadamu
-              .lyrics__bottom
-                | dan
-                pipe
-                | melimpahkan damai sejahtra
-                pipe
-                | bagimu
-
-            .block.lyrics.turquoise
-              .lyrics__top
-                | Aku bersyu
-                pipe
-                | kur, atas hari ulang
-                pipe
-                | tahun sahabatku
-              .lyrics__bottom
-                | slamat hari
-                pipe
-                | ulang tahun Daisy Christi
-                pipe
-                | na
-
-            .block.lyrics.turquoise
-              .lyrics__top
-                | slamat hari
-                pipe
-                | ulang tahun Daisy Christi
-                pipe
-                | na
+            lyrics.block(
+              v-for="(lyric, idx) in lyrics"
+              :className="lyric.className"
+              :top="lyric.top"
+              :bottom="lyric.bottom"
+              :key="idx"
+              ref="lyric") 
 
             .block.greeting
               .greeting__content
@@ -149,9 +39,11 @@
 <script>
 
 import Pipe from './Pipe';
+import Lyrics from './Lyrics';
 import { mapState, mapMutations } from 'vuex';
 
 import loadSound from '@/lib/loadSound';
+import lyrics from '@/lib/birthday/lyrics';
 
 const birthdayTime = 1545411600000;
 const tempo = 74;
@@ -161,11 +53,14 @@ const audioDuration = 133;
 export default {
   name: "Birthday",
   components: {
-    Pipe
+    Pipe,
+    Lyrics
   },
   data: function() {
     return {
-      isBirthday: new Date().getTime() > birthdayTime
+      isBirthday: new Date().getTime() > birthdayTime,
+      playStart: 0,
+      lyrics
     }
   },
   computed: {
@@ -177,12 +72,15 @@ export default {
     })
   },
   methods: {
-    ...mapMutations('birthday', ['setStart', 'setLoaded', 'setAudioContext', 'setGainNode'])
+    ...mapMutations('birthday', ['setStart', 'setLoaded', 'setAudioContext', 'setGainNode']),
+    startPlay: function() {
+      this.playStart = 1;
+      this.lyrics
+    }
   },
   mounted() {
     loadSound('/audio/birthday.mp3')
       .then(({ source, gainNode }) => {
-        console.log(this.$refs);
         this.setLoaded();
         this.setAudioContext({
           audioContext: source
@@ -260,7 +158,7 @@ export default {
 /* wrapper */
 .wrapper {
   height: 100vh;
-  background-image: url('/img/bg_birthday.jpg');
+  // background-image: url('/img/bg_birthday.jpg');
   background-size: cover;
   background-position: left;
 }
