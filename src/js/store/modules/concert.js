@@ -1,4 +1,5 @@
 export default {
+    namespaced: 'true',
     state: {
       loaded: 0,
       start: 0,
@@ -57,5 +58,15 @@ export default {
       }
     },
     actions: {
+      mountAudio({ commit }, payload) {
+        commit({
+          type: 'setAudioContext',
+          audioContext: payload.audioContext
+        });
+        commit({
+          type: 'setGainNode',
+          gainNode: payload.gainNode
+        });
+      },
     }
 };

@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 
-import Birthday from '@/components/Birthday.vue';
+import Birthday from '@/components/Birthday/Birthday.vue';
 import Concert from '@/components/Concert/Concert.vue';
 
 Vue.use(VueRouter);

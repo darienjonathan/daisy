@@ -1,4 +1,4 @@
-export default function(filePath) {
+export default function(filePath, defaultGain = 0) {
   var context = 'AudioContext' in window
   ? new AudioContext()
   : new webkitAudioContext();
@@ -13,7 +13,7 @@ export default function(filePath) {
     req.onload = function(){
       context.decodeAudioData(req.response, function(buffer){
         source.buffer = buffer;
-        gainNode.gain.value = 0;
+        gainNode.gain.value = defaultGain;
         gainNode.connect(context.destination);
         source.connect(gainNode);
         resolve(({ source, gainNode }));

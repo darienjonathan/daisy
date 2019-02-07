@@ -149,24 +149,25 @@ export default {
     Box
   },
   computed: {
-    ...mapState({
-      start: state => state.concert.start,
-      loaded: state => state.concert.loaded,
-      elPos: state => state.concert.elPos,
-      volume: state => state.concert.volume,
-      audioContext: state => state.concert.audioContext,
-      gainNode: state => state.concert.gainNode
+    ...mapState('concert', {
+      start: state => state.start,
+      loaded: state => state.loaded,
+      elPos: state => state.elPos,
+      volume: state => state.volume,
+      audioContext: state => state.audioContext,
+      gainNode: state => state.gainNode
     }),
-    ...mapGetters(["getOpacity"]),
+    ...mapGetters('concert', ["getOpacity"]),
     wrapperClass() {
       return this.start ? 'wrapper--post-click' : 'wrapper--pre-click';
     }
   },
   methods: {
-    ...mapMutations(["setLoaded", "setStart", "setOpacity", "setVolume", "setAudioContext", "setGainNode"]),
+    ...mapMutations('concert', ["setLoaded", "setStart", "setOpacity", "setVolume"]),
+    ...mapActions('concert', ['mountAudio']),
     initiate: function() {
       this.setStart();
-      if(this.audioContext) this.audioContext.start(0);
+      if(this.audioContext) this.audioContext.start();
     },
     setElementOpacity: function() {
       Object.keys(this.elPos).forEach(el => {
@@ -190,13 +191,9 @@ export default {
       this.playStart = 1;
     }
   },
-  watch: {
-    start: function(val) {
-    }
-  },
   directives: {
     play: {
-        update: function(el, binding) {
+      update: function(el, binding) {
         if(binding.expression) {
           el.play();
         } else {
@@ -209,10 +206,8 @@ export default {
       loadSound('/audio/audio.mp3')
         .then(({ source, gainNode }) => {
           this.setLoaded();
-          this.setAudioContext({
-            audioContext: source
-          });
-          this.setGainNode({
+          this.mountAudio({
+            audioContext: source,
             gainNode
           });
           window.addEventListener('scroll', _.throttle(() => {
