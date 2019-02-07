@@ -1,3 +1,11 @@
+This is a repository of a site that contains various pages unrelated to each other, made using vue.js and its supporting tools (vuex, vue-router, etc).
+
+URL: http://daisy-html.s3-website-ap-northeast-1.amazonaws.com/#/
+
+This repository's structure is explained below:
+
+---
+
 kayac-html5-starter
 ====
 
