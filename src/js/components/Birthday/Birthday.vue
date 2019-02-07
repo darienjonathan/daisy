@@ -149,7 +149,7 @@ export default {
 /* wrapper */
 .wrapper {
   height: 100vh;
-  // background-image: url('/img/bg_birthday.jpg');
+  background-image: url('/img/bg_birthday.jpg');
   background-size: cover;
   background-position: left;
 }
