@@ -5,7 +5,7 @@
         | Loading...
       .wrapper(v-else key="loaded")
 
-        transition(name="fade" mode="out-in" v-on:after-enter="startPlay")
+        transition(name="fade")
           .prompt(v-if="!start" key="notStarted")
             .prompt-wait(v-show="!isBirthday")
               | Whoops, it's not your birthday yet!
@@ -19,9 +19,9 @@
               br
               br
               br
-              button.prompt-button(@click="setStart")
+              button.prompt-button(v-on:click="initiate")
                 | Tap to play
-
+          
           .lyrics_container(v-else key="start")
             lyrics.block(
               v-for="(lyric, idx) in lyrics"
@@ -29,9 +29,10 @@
               :top="lyric.top"
               :bottom="lyric.bottom"
               :key="idx"
-              ref="lyric") 
+              :style="{ 'opacity': lyric.opacity }"
+             ) 
 
-            .block.greeting
+            .block.greeting(:style="{ 'opacity': finish }")
               .greeting__content
                 | Happy Birthday, dear!
 </template>
@@ -40,15 +41,11 @@
 
 import Pipe from './Pipe';
 import Lyrics from './Lyrics';
-import { mapState, mapMutations } from 'vuex';
+import { mapState, mapMutations, mapActions } from 'vuex';
 
 import loadSound from '@/lib/loadSound';
-import lyrics from '@/lib/birthday/lyrics';
 
 const birthdayTime = 1545411600000;
-const tempo = 74;
-const frame = 16;
-const audioDuration = 133;
 
 export default {
   name: "Birthday",
@@ -58,34 +55,28 @@ export default {
   },
   data: function() {
     return {
-      isBirthday: new Date().getTime() > birthdayTime,
-      playStart: 0,
-      lyrics
+      isBirthday: new Date().getTime() > birthdayTime
     }
   },
   computed: {
-    ...mapState('birthday', {
-      start: state => state.start,
-      loaded: state => state.loaded,
-      audioContext: state => state.audioContext,
-      gainNode: state => state.gainNode,
-    })
+    ...mapState('birthday', ['start', 'finish', 'loaded', 'audioContext', 'gainNode', 'lyrics'])
   },
   methods: {
-    ...mapMutations('birthday', ['setStart', 'setLoaded', 'setAudioContext', 'setGainNode']),
-    startPlay: function() {
-      this.playStart = 1;
-      this.lyrics
+    ...mapMutations('birthday', ['setLyricOpacity', 'setStart', 'setFinish', 'setLoaded']),
+    ...mapActions('birthday', ['mountAudio', 'animateLyrics', 'finishLyricAnimation']),
+    initiate: function() {
+      this.setStart();
+      if(this.audioContext) this.audioContext.start();
+      this.animateLyrics();
+      this.audioContext.onended = () => this.finishLyricAnimation();
     }
   },
   mounted() {
-    loadSound('/audio/birthday.mp3')
+    loadSound('/audio/birthday.mp3', 1)
       .then(({ source, gainNode }) => {
         this.setLoaded();
-        this.setAudioContext({
-          audioContext: source
-        });
-        this.setGainNode({
+        this.mountAudio({
+          audioContext: source,
           gainNode
         });
       })
@@ -184,16 +175,6 @@ export default {
 .turquoise {
   background-color: rgba(88, 226, 222, 0.6);
   color: white;
-}
-
-.fade-in {
-  opacity: 1;
-  z-index: 1;
-}
-
-.fade-out {
-  opacity: 0;
-  z-index: 0;
 }
 
 </style>
