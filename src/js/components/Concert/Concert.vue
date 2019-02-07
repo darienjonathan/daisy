@@ -163,10 +163,11 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('concert', ["setLoaded", "setStart", "setOpacity", "setVolume", "setAudioContext", "setGainNode"]),
+    ...mapMutations('concert', ["setLoaded", "setStart", "setOpacity", "setVolume"]),
+    ...mapActions('concert', ['mountAudio']),
     initiate: function() {
       this.setStart();
-      if(this.audioContext) this.audioContext.start(0);
+      if(this.audioContext) this.audioContext.start();
     },
     setElementOpacity: function() {
       Object.keys(this.elPos).forEach(el => {
@@ -190,13 +191,9 @@ export default {
       this.playStart = 1;
     }
   },
-  watch: {
-    start: function(val) {
-    }
-  },
   directives: {
     play: {
-        update: function(el, binding) {
+      update: function(el, binding) {
         if(binding.expression) {
           el.play();
         } else {
@@ -209,10 +206,8 @@ export default {
       loadSound('/audio/audio.mp3')
         .then(({ source, gainNode }) => {
           this.setLoaded();
-          this.setAudioContext({
-            audioContext: source
-          });
-          this.setGainNode({
+          this.mountAudio({
+            audioContext: source,
             gainNode
           });
           window.addEventListener('scroll', _.throttle(() => {

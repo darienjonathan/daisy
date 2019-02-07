@@ -58,5 +58,15 @@ export default {
       }
     },
     actions: {
+      mountAudio({ commit }, payload) {
+        commit({
+          type: 'setAudioContext',
+          audioContext: payload.audioContext
+        });
+        commit({
+          type: 'setGainNode',
+          gainNode: payload.gainNode
+        });
+      },
     }
 };
