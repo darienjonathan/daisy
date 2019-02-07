@@ -2,12 +2,9 @@ This is a repository of a site that contains various pages unrelated to each oth
 
 URL: http://daisy-html.s3-website-ap-northeast-1.amazonaws.com/#/
 
-This repository's structure is explained below:
+This repository follows `kayac-html5-starter`'s structure explained below:
 
 ---
-
-kayac-html5-starter
-====
 
 ## 事前に用意するもの
 - node.js (version 8.11.1以上)
