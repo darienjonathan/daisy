@@ -1,5 +1,6 @@
 <template lang="pug">
   .wrapper
+    modal(:isModalShown="isModalShown && activeIndex !== null" :content="contents[activeIndex]" @exit="onModalExit")
     .nav daichrstn
     .profile
       .top
@@ -17,43 +18,47 @@
       .info
         .info__name Daisy Christina
         .info__bio phlegmatic • ISFJ • melophilia • ailurophobia • Phil 1:21
-      .box お誕生日おめでとう
+      .box お誕生日おめでとう！
     .grid
-      .item
-        .item__character O
-        .item__character お
-      .item
-        .item__character TAN
-        .item__character 誕
-      .item
-        .item__character JO
-        .item__character 生
-      .item
-        .item__character BI
-        .item__character 日
-      .item
-        .item__character O
-        .item__character お
-      .item
-        .item__character ME
-        .item__character め
-      .item
-        .item__character DE
-        .item__character で
-      .item
-        .item__character TO
-        .item__character と
-      .item
-        .item__character U
-        .item__character う
+      .item(
+        v-for="(content, index) of contents"
+        @click="onItemClick(index)"
+        :key="index"
+      )
+        .item__character {{ content.japanese }}
+        .item__character {{ content.romaji }}
 </template>
+
 <script>
-export default {
-  
-}
+  import Modal from './Modal'
+  import contents from '@/data/25th-birthday/contents'
+
+  export default {
+    components: {
+      Modal
+    },
+    data() {
+      return {
+        isModalShown: false,
+        contents,
+        activeIndex: null
+      }
+    },
+    methods: {
+      onItemClick(index) {
+        this.activeIndex = index
+        this.isModalShown = true
+      },
+      onModalExit() {
+        this.activeIndex = null
+        this.isModalShown = false
+      }
+    }
+  }
 </script>
 <style lang="scss" scoped>
 
+  $white: white;
   $grey: grey;
   $black: #262626;
   $margin-bottom: 15px;
@@ -95,7 +100,7 @@ export default {
     width: 77px;
     height: 77px;
     border-radius: 50%;
-    border: 2px solid white;
+    border: 2px solid $white;
     box-shadow: 0 0 0 1px $grey;
     margin-right: 28px;
   }
@@ -133,7 +138,7 @@ export default {
     width: 100%;
     height: 28px;
     line-height: 28px;
-    border: 1px solid grey;
+    border: 1px solid $grey;
     border-radius: 5px;
     text-align: center;
     margin-bottom: 2 * $margin-bottom;
@@ -161,4 +166,5 @@ export default {
       font-family: serif;
     }
   }
+
 </style>
