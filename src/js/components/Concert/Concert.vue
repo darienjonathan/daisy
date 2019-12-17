@@ -53,7 +53,7 @@
 
 <style lang="scss" scoped>
 
-@import "common";
+@import "import";
 
 /* transition */
 
