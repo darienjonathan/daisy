@@ -1,7 +1,7 @@
 export default [{
     japanese: 'お',
     romaji: 'O',
-    html: '<span class="emphasize">O</span> dear Daisy, you’re half a century already! Happy birthday!'
+    html: '<span class="emphasize">O</span> dear Daisy, you’re quarter of a century already! Happy birthday!'
   },
   {
     japanese: '誕',
