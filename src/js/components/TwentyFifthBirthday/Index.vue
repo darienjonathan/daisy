@@ -1,6 +1,6 @@
 <template lang="pug">
   .wrapper
-    modal(:isModalShown="isModalShown && activeIndex !== null" :content="contents[activeIndex]" @exit="onModalExit")
+    modal(:isModalShown="isModalShown" :content="contents[activeIndex]" @exit="onModalExit")
     .nav daichrstn
     .profile
       .top
@@ -19,19 +19,24 @@
         .info__name Daisy Christina
         .info__bio phlegmatic • ISFJ • melophilia • ailurophobia • Phil 1:21
       .box お誕生日おめでとう！
+      .catchphrase someone is a big fan that he made a fake instagram page of yours 🙃
     .grid
       .item(
-        v-for="(content, index) of contents"
+        v-for="(content, index) of gridContents"
         @click="onItemClick(index)"
         :key="index"
+        :data-visible="content.isVisible"
+        :data-active="isAllOpened || (index === activeIndex)"
       )
         .item__character {{ content.japanese }}
         .item__character {{ content.romaji }}
+    .troll.troll-first hayo cari apa hayo 😏
+    .troll.troll-finish gak ada apa-apa 🤪
 </template>
 
 <script>
   import Modal from './Modal'
-  import contents from '@/data/25th-birthday/contents'
+  import contents, { finalContent } from '@/data/25th-birthday/contents'
 
   export default {
     components: {
@@ -40,18 +45,42 @@
     data() {
       return {
         isModalShown: false,
-        contents,
-        activeIndex: null
+        contents: contents.map((content, index) => ({
+          ...content,
+          isVisible: false,
+          isPartOfGrid: content.isPartOfGrid === false ? false : true
+        })),
+        activeIndex: null,
+        isAllOpened: false
       }
+    },
+    computed: {
+      gridContents() {
+        return this.contents.filter(content => content.isPartOfGrid !== false)
+      }
+    },
+    mounted() {
+      setTimeout(() => {
+        this.contents[0].isVisible = true
+        this.activeIndex = 0
+      }, 1000)
     },
     methods: {
       onItemClick(index) {
-        this.activeIndex = index
         this.isModalShown = true
       },
       onModalExit() {
-        this.activeIndex = null
         this.isModalShown = false
+        if(!this.contents.some(content => !content.isVisible)) {
+          this.isAllOpened = true
+          return
+        }
+        this.activeIndex = this.activeIndex + 1
+        this.contents[this.activeIndex].isVisible = true
+        if(this.activeIndex !== this.contents.length - 1) return
+        setTimeout(() => {
+          this.isModalShown = true
+        }, 2000)
       }
     }
   }
@@ -72,7 +101,18 @@
     font-size: 12px;
   }
 
+  @keyframes border-color-animation {
+    0% {
+      border-color: $grey;
+    }
+    100% {
+      border-color: turquoise;
+    }
+  }
+
   .wrapper {
+    position: relative;
+    height: 3000px;
     color: $black;
     font-weight: normal;
   }
@@ -141,7 +181,14 @@
     border: 1px solid $grey;
     border-radius: 5px;
     text-align: center;
+    margin-bottom: $margin-bottom;
+  }
+
+  .catchphrase {
     margin-bottom: 2 * $margin-bottom;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
   }
 
   .grid {
@@ -158,13 +205,40 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    border: 1px solid $grey;
+    border: 2px solid $grey;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1s;
+    &[data-visible="true"] {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    &[data-active="true"] {
+      animation: border-color-animation 0.75s infinite;
+      animation-direction: alternate;
+    }
     &__character {
       text-align: center;
       font-size: 24px;
       font-weight: bold;
       font-family: serif;
     }
+  }
+
+  .troll {
+    @include stand-out-font;
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    color: darkred;
+  }
+
+  .troll-first {
+    bottom: 50%;
+  }
+
+  .troll-finish {
+    bottom: 20px;
   }
 
 </style>

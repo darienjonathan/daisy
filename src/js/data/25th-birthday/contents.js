@@ -42,5 +42,19 @@ export default [{
     japanese: 'う',
     romaji: 'U',
     html: 'I Love <span class="emphasize">U</span>, Dear!'
+  },
+  {
+    japanese: `Daisyよ、お誕生日
+おめでとうございます！`,
+    romaji: `Happy Birthday,
+Dear Daisy!`,
+    html: `Aku bahagia, bisa jadi salah satu bagian dari hidup kamu sebagai sahabat, partner kamu. Mendampingi kamu di tengah suka, susah, naik turun HPDT kamu.
+
+Semoga keberadaan aku selama 1 tahun kemarin menjadi penghiburan dan sukacita juga buat kamu.
+Dan semoga, kedepannya pun bisa menjadi kebaikan bagi kamu.
+
+これからもよろしくね！
+`,
+    isPartOfGrid: false
   }
 ]
