@@ -1,6 +1,6 @@
 <template lang="pug">
   .wrapper
-    modal(:isModalShown="isModalShown" :content="contents[activeIndex]" @exit="onModalExit")
+    modal(:isModalShown="isModalShown" :content="contents[clickedIndex]" @exit="onModalExit")
     .nav daichrstn
     .profile
       .top
@@ -18,7 +18,10 @@
       .info
         .info__name Daisy Christina
         .info__bio phlegmatic • ISFJ • melophilia • ailurophobia • Phil 1:21
-      .box お誕生日おめでとう！
+      .box(
+        :data-active="isAllOpened"
+        @click="onItemClick(contents.length - 1)"
+      ) お誕生日おめでとう！
       .catchphrase someone is a big fan that he made a fake instagram page of yours 🙃
     .grid
       .item(
@@ -50,6 +53,7 @@
           isVisible: false,
           isPartOfGrid: content.isPartOfGrid === false ? false : true
         })),
+        clickedIndex: null,
         activeIndex: null,
         isAllOpened: false
       }
@@ -67,10 +71,13 @@
     },
     methods: {
       onItemClick(index) {
+        this.clickedIndex = index
         this.isModalShown = true
       },
       onModalExit() {
         this.isModalShown = false
+        if(this.clickedIndex !== this.activeIndex) return
+        this.clickedIndex = null
         if(!this.contents.some(content => !content.isVisible)) {
           this.isAllOpened = true
           return
@@ -79,6 +86,7 @@
         this.contents[this.activeIndex].isVisible = true
         if(this.activeIndex !== this.contents.length - 1) return
         setTimeout(() => {
+          this.clickedIndex = this.activeIndex
           this.isModalShown = true
         }, 2000)
       }
@@ -182,6 +190,12 @@
     border-radius: 5px;
     text-align: center;
     margin-bottom: $margin-bottom;
+    pointer-events: none;
+    &[data-active="true"] {
+      animation: border-color-animation 0.75s infinite;
+      animation-direction: alternate;
+      pointer-events: auto;
+    }
   }
 
   .catchphrase {
