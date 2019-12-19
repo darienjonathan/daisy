@@ -16,7 +16,7 @@ export default [{
   {
     japanese: '日',
     romaji: 'BI',
-    html: '<span class="emphasize">Bi</span>ngkisan yang meluluhkan hati tuk ulang tahun mu, pasriny bukan talenta ku.'
+    html: '<span class="emphasize">Bi</span>ngkisan yang meluluhkan hati tuk ulang tahun mu, pastinya bukan talenta ku.'
   },
   {
     japanese: 'お',
