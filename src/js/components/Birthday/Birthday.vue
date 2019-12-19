@@ -98,7 +98,6 @@ export default {
   font-weight: bold;
   color: rgb(80, 150, 144);
   text-align: center;
-
   font-size: 1.45rem;
 }
 
