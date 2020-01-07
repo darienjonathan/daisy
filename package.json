@@ -6,15 +6,33 @@
   "license": "MIT",
   "scripts": {
     "build": "webpack --mode production --progress",
-    "start": "webpack-dev-server --mode development --inline --open"
+    "start": "webpack-dev-server --mode development --inline --open",
+    "test": "jest"
   },
   "devDependencies": {
+    "@babel/core": "^7.7.7",
+    "@babel/plugin-proposal-class-properties": "^7.0.0",
+    "@babel/plugin-proposal-decorators": "^7.0.0",
+    "@babel/plugin-proposal-do-expressions": "^7.0.0",
+    "@babel/plugin-proposal-export-default-from": "^7.0.0",
+    "@babel/plugin-proposal-export-namespace-from": "^7.0.0",
+    "@babel/plugin-proposal-function-sent": "^7.0.0",
+    "@babel/plugin-proposal-json-strings": "^7.0.0",
+    "@babel/plugin-proposal-logical-assignment-operators": "^7.0.0",
+    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.0.0",
+    "@babel/plugin-proposal-numeric-separator": "^7.0.0",
+    "@babel/plugin-proposal-optional-chaining": "^7.0.0",
+    "@babel/plugin-proposal-pipeline-operator": "^7.0.0",
+    "@babel/plugin-proposal-throw-expressions": "^7.0.0",
+    "@babel/plugin-syntax-dynamic-import": "^7.0.0",
+    "@babel/plugin-syntax-import-meta": "^7.0.0",
+    "@babel/plugin-transform-runtime": "^7.7.6",
+    "@babel/preset-env": "^7.7.7",
+    "@babel/preset-stage-1": "^7.0.0",
+    "@vue/test-utils": "^1.0.0-beta.30",
     "autoprefixer": "^8.2.0",
-    "babel-core": "^6.26.3",
-    "babel-loader": "^7.1.4",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-env": "^1.6.1",
-    "babel-preset-stage-1": "^6.24.1",
+    "babel-jest": "^24.9.0",
+    "babel-loader": "^8.0.6",
     "css-loader": "^3.2.1",
     "css-mqpacker": "^6.0.2",
     "extract-text-webpack-plugin": "next",
@@ -22,6 +40,8 @@
     "glob": "^7.1.2",
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.1.0",
+    "jest": "^24.9.0",
+    "jest-serializer-vue": "^2.0.2",
     "js-yaml-loader": "^0.1.0",
     "lodash": "^4.17.15",
     "node-sass": "^4.13.0",
@@ -33,6 +53,7 @@
     "reset.css": "^2.0.2",
     "sass-loader": "^6.0.7",
     "vue": "2.5.16",
+    "vue-jest": "^3.0.5",
     "vue-loader": "14.2.2",
     "vue-router": "3.0.1",
     "vue-style-loader": "4.1.0",
@@ -45,11 +66,34 @@
   },
   "babel": {
     "presets": [
-      "env",
-      "stage-1"
+      "@babel/preset-env"
     ],
     "plugins": [
-      "transform-runtime"
+      "@babel/plugin-syntax-dynamic-import",
+      "@babel/plugin-syntax-import-meta",
+      "@babel/plugin-proposal-class-properties",
+      "@babel/plugin-proposal-json-strings",
+      [
+        "@babel/plugin-proposal-decorators",
+        {
+          "legacy": true
+        }
+      ],
+      "@babel/plugin-proposal-function-sent",
+      "@babel/plugin-proposal-export-namespace-from",
+      "@babel/plugin-proposal-numeric-separator",
+      "@babel/plugin-proposal-throw-expressions",
+      "@babel/plugin-proposal-export-default-from",
+      "@babel/plugin-proposal-logical-assignment-operators",
+      "@babel/plugin-proposal-optional-chaining",
+      [
+        "@babel/plugin-proposal-pipeline-operator",
+        {
+          "proposal": "minimal"
+        }
+      ],
+      "@babel/plugin-proposal-nullish-coalescing-operator",
+      "@babel/plugin-proposal-do-expressions"
     ]
   },
   "browserslist": [

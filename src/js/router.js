@@ -15,6 +15,6 @@ const routes = [{
   path: '/25th-birthday', component: TwentyFifthBirthday
 }];
 
-module.exports = new VueRouter({
+export default new VueRouter({
     routes
 });
